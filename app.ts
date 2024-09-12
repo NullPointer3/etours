@@ -1,8 +1,7 @@
-import express from 'express';
+import express, {Request, Response} from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 import { handleError, parseJson } from './helper';
-import { PassThrough } from 'stream';
 
 interface Tour {
   id: number,
@@ -23,11 +22,15 @@ interface Tour {
 const app = express();
 
 app.use(express.json());
+app.use((req, res, next) => {
+  console.log('Hello from themiddleware 👋')
+  next()
+})
 
 const DATA_FILE = path.join(__dirname, 'dev-data/data/tours-simple.json')
 app.set('port', (process.env.PORT || 3000))
 
-app.get('/api/tours', (req, res) => {
+const getAllTours = (req: Request, res: Response) => {
   fs.readFile(DATA_FILE, (err, data) => {
     if(err) {
       handleError(res, "failed to read File")
@@ -43,16 +46,16 @@ app.get('/api/tours', (req, res) => {
       }
     })
   })
-})
+}
 
-app.get('/api/tours/:id', (req, res) => {
+const getTour = (req: Request, res: Response) => {
   fs.readFile(DATA_FILE, (err, data) => {
     if(err) {
       handleError(res, "Failed to read file")
     }
-
+    const id = parseInt(req.params.id)
     const tours: Tour[] = parseJson(data.toString(), res)
-    const tour = tours.find(el => el.id === parseInt(req.params.id))
+    const tour = tours.find(el => el.id === id)
     if(!tour){
       return res.status(404).json({
         status: 'Fail',
@@ -66,9 +69,9 @@ app.get('/api/tours/:id', (req, res) => {
       }
     })
   })
-})
+}
 
-app.post('/api/tours', (req, res) => {
+const createTour =  (req: Request, res: Response) => {
   fs.readFile(DATA_FILE, (err, data) => {
     if(err) {
       handleError(res, "Failed to read data")
@@ -88,9 +91,91 @@ app.post('/api/tours', (req, res) => {
       })
     })    
   })
-})
+}
 
-app.patch('/api/tours/')
+const updateTour = (req: Request, res: Response) => {
+  const tourId = parseInt(req.params.id)
+  const { updates } = req.body
+
+  fs.readFile(DATA_FILE, (err, data) => {
+    if(err) {
+      handleError(res, "Failed to Read Data")
+    }
+    
+    const tours: Tour[] = parseJson(data.toString(), res)
+    if(!tours) return 
+
+    const tourIndex = tours.findIndex(tour => tour.id === tourId)
+    if(tourIndex === -1) {
+      return res.status(404).json({
+        status: "Fail",
+        message: "Invalid ID"
+      })
+    }
+    const updatedTour: Tour = {...tours[tourIndex], ...updates}
+    tours[tourIndex] = updatedTour
+
+    fs.writeFile(DATA_FILE, JSON.stringify(tours, null, 4), (writeErr) => {
+      if(writeErr){
+        handleError(res, "Failed writing to File")
+      }
+      res.status(200).json({
+        status: "success",
+        data: {
+          tour: updatedTour
+        }
+      })
+    })
+  })
+}
+
+const deleteTour =  (req: Request, res: Response) => {
+  const { id } = req.params
+  fs.readFile(DATA_FILE, (err, data) => {
+    if(err){
+      handleError(res, "Internal Server Error")
+    }
+
+    let tours: Tour[] = parseJson(data.toString(), res)
+    const originalLength = tours.length
+    const tourId = parseInt(id)
+
+    tours = tours.filter(tour => tour.id !== tourId)
+    if(tours.length === originalLength){
+      return res.status(404).json({
+        status: "Fail",
+        message: "ID Not Found!"
+      })
+    }
+    fs.writeFile(DATA_FILE, JSON.stringify(tours, null, 4), (writeError) => {
+      if(writeError){
+        handleError(res, "Error writing to file")
+      }
+      res.status(200).json({
+        status: "success",
+        message: "Delete Completed!",
+        data: null
+      })
+    })
+  })
+}
+
+// app.get('/api/tours', getAllTours)
+// app.get('/api/tours/:id', getTour)
+// app.post('/api/tours', createTour)
+// app.patch('/api/tours/:id', updateTour)
+// app.delete('/api/tours/:id', deleteTour)
+
+app
+  .route('/api/tours')
+  .get(getAllTours)
+  .post(createTour)
+
+app
+  .route('/api/tours/:id')
+  .get(getTour)
+  .patch(updateTour)
+  .delete(deleteTour)
 
 app.listen(app.get('port'), () => {
   console.log(`Server is running on http://localhost:${app.get('port')}`);
