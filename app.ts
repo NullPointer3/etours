@@ -1,6 +1,7 @@
 import express, {Request, Response} from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
+import morgan from 'morgan';
 import { handleError, parseJson } from './helper';
 
 interface Tour {
@@ -21,11 +22,8 @@ interface Tour {
 
 const app = express();
 
+app.use(morgan('dev'))
 app.use(express.json());
-app.use((req, res, next) => {
-  console.log('Hello from themiddleware 👋')
-  next()
-})
 
 const DATA_FILE = path.join(__dirname, 'dev-data/data/tours-simple.json')
 app.set('port', (process.env.PORT || 3000))
@@ -160,6 +158,41 @@ const deleteTour =  (req: Request, res: Response) => {
   })
 }
 
+const getAllUsers = (req: Request, res: Response) => {
+  res.status(500).json({
+    status: "error",
+    message: "route under construction"
+  })
+}
+
+const getUser = (req: Request, res: Response) => {
+  res.status(500).json({
+    status: "error",
+    message: "route under construction"
+  })
+}
+
+const createUser = (req: Request, res: Response) => {
+  res.status(500).json({
+    status: "error",
+    message: "route under construction"
+  })
+}
+
+const updateUser = (req: Request, res: Response) => {
+  res.status(500).json({
+    status: "error",
+    message: "route under construction"
+  })
+}
+
+const deleteUser = (req: Request, res: Response) => {
+  res.status(500).json({
+    status: "error",
+    message: "route under construction"
+  })
+}
+
 // app.get('/api/tours', getAllTours)
 // app.get('/api/tours/:id', getTour)
 // app.post('/api/tours', createTour)
@@ -176,6 +209,17 @@ app
   .get(getTour)
   .patch(updateTour)
   .delete(deleteTour)
+
+app
+  .route('/api/users')
+  .get(getAllUsers)
+  .post(createUser)
+
+app
+  .route('/api/users/:id')
+  .get(getUser)
+  .patch(updateUser)
+  .delete(deleteUser)
 
 app.listen(app.get('port'), () => {
   console.log(`Server is running on http://localhost:${app.get('port')}`);
