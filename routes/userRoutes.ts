@@ -1,55 +1,17 @@
-import express , {Request, Response} from 'express';
-import fs from 'fs'
-import { handleError, parseJson } from '../helper';
-import { DATA_FILE } from '../app';
+import express from 'express';
+import userControllers from '../controllers/usersController';
 
 const router = express.Router()
 
-
-const getAllUsers = (req: Request, res: Response) => {
-  res.status(500).json({
-    status: "error",
-    message: "route under construction"
-  })
-}
-
-const getUser = (req: Request, res: Response) => {
-  res.status(500).json({
-    status: "error",
-    message: "route under construction"
-  })
-}
-
-const createUser = (req: Request, res: Response) => {
-  res.status(500).json({
-    status: "error",
-    message: "route under construction"
-  })
-}
-
-const updateUser = (req: Request, res: Response) => {
-  res.status(500).json({
-    status: "error",
-    message: "route under construction"
-  })
-}
-
-const deleteUser = (req: Request, res: Response) => {
-  res.status(500).json({
-    status: "error",
-    message: "route under construction"
-  })
-}
-
 router
   .route('/')
-  .get(getAllUsers)
-  .post(createUser)
+  .get(userControllers.getAllUsers)
+  .post(userControllers.createUser)
 
 router
   .route('/:id')
-  .get(getUser)
-  .patch(updateUser)
-  .delete(deleteUser)
+  .get(userControllers.getUser)
+  .patch(userControllers.updateUser)
+  .delete(userControllers.deleteUser)
 
 export default router;

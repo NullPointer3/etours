@@ -1,4 +1,5 @@
 import { Request, Response} from 'express';
+import * as path from 'path';
 
 export const handleError = (
   res: Response, 
@@ -22,3 +23,4 @@ export const parseJson = (
   }
 };
 
+export const DATA_FILE = path.join(__dirname, 'dev-data/data/tours-simple.json')

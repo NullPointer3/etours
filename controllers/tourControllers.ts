@@ -1,6 +1,6 @@
-import express, { Request, Response } from 'express'
+import { Request, Response } from 'express'
 import fs from "fs";
-import { DATA_FILE } from '../app';
+import { DATA_FILE } from '../helper';
 import { handleError, parseJson } from '../helper';
 
 interface Tour {
@@ -148,3 +148,13 @@ const deleteTour =  (req: Request, res: Response) => {
     })
   })
 }
+
+const tourControllers = {
+  getAllTours,
+  getTour,
+  updateTour,
+  deleteTour,
+  createTour
+}
+
+export default tourControllers
