@@ -1,7 +1,8 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import fs from "fs";
 import { DATA_FILE } from '../helper';
 import { handleError, parseJson } from '../helper';
+
 
 interface Tour {
   id: number,
@@ -17,6 +18,16 @@ interface Tour {
   imageCover: string
   images: string[]
   startDates: string[]
+}
+
+const checkBody = (req: Request, res: Response, next: NextFunction) => {
+  if(!req.body.name || !req.body.price){
+    return res.status(400).json({
+      status: "bad Request",
+      message: "Missing name or price"
+    })
+  }
+  next()
 }
 
 const getAllTours = (req: Request, res: Response) => {
@@ -154,7 +165,8 @@ const tourControllers = {
   getTour,
   updateTour,
   deleteTour,
-  createTour
+  createTour,
+  checkBody
 }
 
 export default tourControllers
