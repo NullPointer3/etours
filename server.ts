@@ -1,9 +1,10 @@
 import dotenv from 'dotenv'
 dotenv.config({ path: './.env'})
-import connectDB from './mongoose';
+import DBConnections from './mongoose';
 import app from "./app";
 
-connectDB()
+DBConnections.connectDBLocal()
+//DBConnections.connectDB()
 
 app.set('port', (process.env.PORT || 8000))
 

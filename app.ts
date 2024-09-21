@@ -12,7 +12,7 @@ if(process.env.NODE_ENV === 'development'){
   app.use(morgan('dev'))
 }
 app.use(express.json());
-app.use(express.static(html))
+app.use(express.static(html)) 
 
 app.use('/api/tours', tourRouter)
 app.use('/api/users', userRouter)
