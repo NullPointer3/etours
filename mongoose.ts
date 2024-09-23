@@ -24,34 +24,6 @@ const connectDBLocal = (): Promise<void> => {
   .catch(err => console.error(`Error: ${err}`))
 }
 
-const tourSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'A tour must have a name'],
-    unique: true
-  },
-  price: {
-    type: Number,
-    required: [true, 'A tour must have a price']
-  },
-  ratings: {
-    type: Number,
-    default: 4
-  }
-})
-
-const Tour = mongoose.model('Tour', tourSchema)
-
-const tourTest = new Tour({
-  name: "Explore Bravos",
-  price: 372,
-  ratings: 5.0
-})
-
-tourTest.save().then(doc => {
-  console.log(doc)
-}).catch(err => console.error(err))
-
 const DBConnections = {
   connectDB,
   connectDBLocal

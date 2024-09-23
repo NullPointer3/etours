@@ -11,7 +11,7 @@ router.param('id', (req, response, next, val) => {
 router
   .route('/')
   .get(tourControllers.getAllTours)
-  .post(tourControllers.checkBody, tourControllers.createTour)
+  .post(tourControllers.createTour)
 
 router
   .route('/:id')
